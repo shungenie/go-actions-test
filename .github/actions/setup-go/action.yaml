@@ -11,11 +11,8 @@ runs:
       - uses: actions/cache@v4
         id: go-cache
         with:
-          path: |
-            ~/go/pkg/mod
-            ~/.cache/go-build
-            ~/go/bin
-          key: go-${{ hashFiles('app/go.sum') }}-${{ hashFiles('app/**/*.go') }}
+          path: ~/go/pkg/mod
+          key: go-${{ hashFiles('app/go.sum') }}
       - name: Install Dependencies 
         if: steps.go-cache.outputs.cache-hit != 'true'
         shell: bash
