@@ -4,7 +4,7 @@ on:
     paths:
       - "app/**"
       - ".github/actions/**"
-      - ".github/workflows/publisher_console.yaml"
+      - ".github/workflows/main.yaml"
 
 jobs:
   small-api-test:
