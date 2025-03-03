@@ -7,6 +7,16 @@ on:
       - ".github/workflows/main.yaml"
 
 jobs:
+  api-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-go
+      - uses: golangci/golangci-lint-action@v6
+        with:
+          working-directory: app
+          args: --timeout=30m
+          skip-save-cache: true
   small-api-test:
     runs-on: ubuntu-latest
     permissions:
@@ -16,6 +26,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-go
+      - name: Cache gotestsum
+        id: gotestsum-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GOTESTSUM_BIN }}
+          key: ${{ runner.os }}-go-gotestsum
+      - name: Install gotestsum
+        if: ${{ steps.gotestsum-cache.outputs.cache-hit != 'true' }}
+        run: GOBIN="${{ env.GOTESTSUM_BIN }}" go install gotest.tools/gotestsum@latest
       - name: run small tests
         working-directory: ./app
         run: ${{ env.GOTESTSUM_BIN }}/gotestsum --format github-actions --junitfile api-test-log.xml ./...
