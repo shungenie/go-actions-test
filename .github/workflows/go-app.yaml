@@ -4,9 +4,19 @@ on:
     paths:
       - "app/**"
       - ".github/actions/**"
-      - ".github/workflows/publisher_console.yaml"
+      - ".github/workflows/main.yaml"
 
 jobs:
+  api-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-go
+      - uses: golangci/golangci-lint-action@v6
+        with:
+          working-directory: app
+          args: --timeout=30m
+          skip-save-cache: true
   small-api-test:
     runs-on: ubuntu-latest
     permissions:
@@ -18,4 +28,4 @@ jobs:
       - uses: ./.github/actions/setup-go
       - name: run small tests
         working-directory: ./app
-        run: go run gotest.tools/gotestsum@v1.12.0 --format github-actions --junitfile api-test-log.xml ./...
+        run: go run gotest.tools/gotestsum@latest --format github-actions --junitfile api-test-log.xml ./...

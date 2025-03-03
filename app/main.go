@@ -63,13 +63,21 @@ func initServer(cfg Config) *http.Server {
 
 		// JSONレスポンスを返す
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(data)
+		err := json.NewEncoder(w).Encode(data)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	})
 
 	// プレーンテキストで「sampleだよ」を返すエンドポイント
 	mux.HandleFunc("/plain", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-		w.Write([]byte("sampleだよ"))
+		_, err := w.Write([]byte("sampleだよ"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	})
 
 	// ヘルスチェック
@@ -85,7 +93,11 @@ func initServer(cfg Config) *http.Server {
 			"environment": os.Getenv("ENV"),
 		}
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(info)
+		err := json.NewEncoder(w).Encode(info)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	})
 
 	// その他のルートを追加
@@ -136,7 +148,11 @@ func setupAdditionalRoutes(mux *http.ServeMux) {
 		}
 
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		tmpl.Execute(w, data)
+		err := tmpl.Execute(w, data)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	})
 }
 

@@ -185,3 +185,74 @@ func TestCountWords(t *testing.T) {
 		})
 	}
 }
+
+func TestCalculateCircleArea(t *testing.T) {
+	// テストケースの定義
+	tests := []struct {
+		name        string  // テスト名
+		radius      float64 // 入力値（半径）
+		expected    float64 // 期待される結果（面積）
+		expectError bool    // エラーが期待されるかどうか
+	}{
+		{
+			name:        "正の半径",
+			radius:      5.0,
+			expected:    math.Pi * 25.0, // 5^2 * π
+			expectError: false,
+		},
+		{
+			name:        "ゼロの半径",
+			radius:      0.0,
+			expected:    0.0,
+			expectError: false,
+		},
+		{
+			name:        "負の半径",
+			radius:      -1.0,
+			expected:    0.0,
+			expectError: true,
+		},
+		{
+			name:        "小さな値",
+			radius:      0.1,
+			expected:    math.Pi * 0.01, // 0.1^2 * π
+			expectError: false,
+		},
+		{
+			name:        "大きな値",
+			radius:      1000.0,
+			expected:    math.Pi * 1000000.0, // 1000^2 * π
+			expectError: false,
+		},
+	}
+
+	// 各テストケースを実行
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// 関数を実行
+			result, err := CalculateCircleArea(tt.radius)
+
+			// エラーチェック
+			if (err != nil) != tt.expectError {
+				t.Errorf("CalculateCircleArea(%f) error = %v; expectError %v", tt.radius, err, tt.expectError)
+				return
+			}
+
+			// エラーが期待されていない場合、結果を検証
+			if !tt.expectError {
+				// 浮動小数点数の比較は完全一致ではなく、許容誤差内かをチェック
+				if math.Abs(result-tt.expected) > 0.0001 {
+					t.Errorf("CalculateCircleArea(%f) = %f; expected %f", tt.radius, result, tt.expected)
+				}
+			}
+
+			// エラーが期待される場合、エラーメッセージを検証
+			if tt.expectError && err != nil {
+				expectedErrorMsg := "半径は負の値にできません"
+				if err.Error() != expectedErrorMsg {
+					t.Errorf("CalculateCircleArea(%f) expected error message = %q; got %q", tt.radius, expectedErrorMsg, err.Error())
+				}
+			}
+		})
+	}
+}
