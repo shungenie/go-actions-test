@@ -6,15 +6,15 @@ runs:
   steps:
       - uses: actions/setup-go@v5
         with:
-          go-version-file: ./app/api/go.mod
+          go-version-file: ./app/go.mod
           cache: false
       - uses: actions/cache@v4
         id: go-cache
         with:
           path: ~/go/pkg/mod
-          key: go-${{ hashFiles('app/api/go.sum') }}
+          key: go-${{ hashFiles('app/go.sum') }}
       - name: Install Dependencies 
         if: steps.go-cache.outputs.cache-hit != 'true'
         shell: bash
-        working-directory: ./app/api
+        working-directory: ./app
         run: go get -v -t -d ./...
