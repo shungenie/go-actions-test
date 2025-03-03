@@ -1,0 +1,20 @@
+name: setup-go
+description: Setup Go environment
+
+runs:
+  using: composite
+  steps:
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: ./app/api/go.mod
+          cache: false
+      - uses: actions/cache@v4
+        id: go-cache
+        with:
+          path: ~/go/pkg/mod
+          key: go-${{ hashFiles('app/api/go.sum') }}
+      - name: Install Dependencies 
+        if: steps.go-cache.outputs.cache-hit != 'true'
+        shell: bash
+        working-directory: ./app/api
+        run: go get -v -t -d ./...
