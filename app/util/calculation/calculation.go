@@ -28,6 +28,7 @@ func Divide(a, b int) (int, error) {
 	if b == 0 {
 		return 0, errors.New("ゼロによる除算はできません")
 	}
+	// 除算結果を返す
 	return a / b, nil
 }
 
