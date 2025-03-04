@@ -1,20 +1,39 @@
 name: setup-go
 description: Setup Go environment
 
+inputs:
+  go-mod-path:
+    description: 'Path to go.mod file'
+    required: true
+    default: 'app/go.mod'
+
 runs:
   using: composite
   steps:
       - uses: actions/setup-go@v5
         with:
-          go-version-file: ./app/go.mod
+          go-version-file: ${{ inputs.go-mod-path }}
           cache: false
-      - uses: actions/cache@v4
-        id: go-cache
-        with:
-          path: ~/go/pkg/mod
-          key: go-${{ hashFiles('app/go.sum') }}
-      - name: Install Dependencies 
-        if: steps.go-cache.outputs.cache-hit != 'true'
+      - id: vars
         shell: bash
-        working-directory: ./app
-        run: go get -v -t -d ./...
+        run: |
+          echo "GOCACHE=$(go env GOCACHE)" >> "$GITHUB_OUTPUT"
+          echo "GOMODCACHE=$(go env GOMODCACHE)" >> "$GITHUB_OUTPUT"
+          echo "GOVERSION=$(go env GOVERSION)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            ${{ steps.vars.outputs.GOCACHE }}
+            ${{ steps.vars.outputs.GOMODCACHE }}
+          key: golint-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.vars.outputs.GOVERSION }}-${{ hashFiles('${{ inputs.go-mod-path }}') }}
+      - run: |
+          cd $(dirname ${{ inputs.go-mod-path }})
+          go mod download
+          go build ./...
+        shell: bash
+      - uses: actions/cache/save@v4
+        with:
+          path: |
+            ${{ steps.vars.outputs.GOCACHE }}
+            ${{ steps.vars.outputs.GOMODCACHE }}
+          key: golint-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.vars.outputs.GOVERSION }}-${{ hashFiles('${{ inputs.go-mod-path }}') }}
