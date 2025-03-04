@@ -12,6 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-go
+        with:
+          go-mod-path: app/go.mod
       - uses: golangci/golangci-lint-action@v6
         with:
           working-directory: app
@@ -26,6 +28,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-go
+        with:
+          go-mod-path: app/go.mod
       - name: run small tests
         working-directory: ./app
         run: go run gotest.tools/gotestsum@latest --format github-actions --junitfile api-test-log.xml ./...

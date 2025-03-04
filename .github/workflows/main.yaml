@@ -18,3 +18,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-go
+        with:
+          go-mod-path: app/go.mod
