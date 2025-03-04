@@ -5,7 +5,7 @@ inputs:
   go-mod-path:
     description: 'Path to go.mod file'
     required: true
-    default: './app/go.mod'
+    default: 'go.mod'
 
 runs:
   using: composite
