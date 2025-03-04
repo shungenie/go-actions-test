@@ -5,7 +5,7 @@ inputs:
   go-mod-path:
     description: 'Path to go.mod file'
     required: true
-    default: 'app/go.mod'
+    default: './app/go.mod'
 
 runs:
   using: composite
@@ -20,14 +20,15 @@ runs:
           echo "GOCACHE=$(go env GOCACHE)" >> "$GITHUB_OUTPUT"
           echo "GOMODCACHE=$(go env GOMODCACHE)" >> "$GITHUB_OUTPUT"
           echo "GOVERSION=$(go env GOVERSION)" >> "$GITHUB_OUTPUT"
+          echo "GOMODPATH=${{ inputs.go-mod-path }}" >> "$GITHUB_ENV"
       - uses: actions/cache/restore@v4
         with:
           path: |
             ${{ steps.vars.outputs.GOCACHE }}
             ${{ steps.vars.outputs.GOMODCACHE }}
-          key: golint-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.vars.outputs.GOVERSION }}-${{ hashFiles('${{ inputs.go-mod-path }}') }}
+          key: go-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.vars.outputs.GOVERSION }}-${{ hashFiles(format('{0}', env.GOMODPATH)) }}
       - run: |
-          cd $(dirname ${{ inputs.go-mod-path }})
+          cd $(dirname ${{ env.GOMODPATH }})
           go mod download
           go build ./...
         shell: bash
@@ -36,4 +37,4 @@ runs:
           path: |
             ${{ steps.vars.outputs.GOCACHE }}
             ${{ steps.vars.outputs.GOMODCACHE }}
-          key: golint-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.vars.outputs.GOVERSION }}-${{ hashFiles('${{ inputs.go-mod-path }}') }}
+          key: go-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.vars.outputs.GOVERSION }}-${{ hashFiles(format('{0}', env.GOMODPATH)) }}
