@@ -46,6 +46,7 @@ func CalculateAverage(numbers []int) (float64, error) {
 
 // IsEven は数値が偶数かどうかを判定する
 func IsEven(number int) bool {
+	// 2で割り切れるかどうかで判定
 	return number%2 == 0
 }
 
