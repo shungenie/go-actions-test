@@ -18,6 +18,7 @@ func Subtract(a, b int) int {
 
 // Multiply は2つの数値を掛け算する関数
 func Multiply(a, b int) int {
+	// 乗算結果を返す
 	return a * b
 }
 
