@@ -26,7 +26,7 @@ runs:
           path: |
             ${{ steps.vars.outputs.GOCACHE }}
             ${{ steps.vars.outputs.GOMODCACHE }}
-          key: go-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.vars.outputs.GOVERSION }}-${{ hashFiles(format('{0}', env.GOMODPATH)) }}
+          key: go-${{ runner.os }}-${{ runner.arch }}-${{ steps.vars.outputs.GOVERSION }}-${{ hashFiles(format('{0}', env.GOMODPATH)) }}
       - run: |
           cd $(dirname ${{ env.GOMODPATH }})
           go mod download
@@ -37,4 +37,4 @@ runs:
           path: |
             ${{ steps.vars.outputs.GOCACHE }}
             ${{ steps.vars.outputs.GOMODCACHE }}
-          key: go-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.vars.outputs.GOVERSION }}-${{ hashFiles(format('{0}', env.GOMODPATH)) }}
+          key: go-${{ runner.os }}-${{ runner.arch }}-${{ steps.vars.outputs.GOVERSION }}-${{ hashFiles(format('{0}', env.GOMODPATH)) }}
